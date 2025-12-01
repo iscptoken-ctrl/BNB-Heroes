@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🗡️ İPEK YOLU RPG - Skill'li Versiyon</title>
+  <title>🗡️ İPEK YOLU RPG - Nişanlı Skill!</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -14,16 +14,16 @@
         <div id="healthFill"></div>
       </div>
       <div>Level: <span id="level">1</span> | Exp: <span id="exp">0</span>/<span id="expNext">100</span></div>
-      <div>Skill: <span id="currentSkill">Yok</span> | <span id="enemyCount">0</span> Düşman</div>
+      <div>Skill: <span id="currentSkill">Ateş Topu</span> | <span id="enemyCount">0</span> Düşman</div>
       <div id="cooldownBar" style="width: 200px; height: 10px; background: #333; border: 1px solid #FFD700; margin: 5px auto; display: none;">
         <div id="cooldownFill" style="height: 100%; background: #00FF00; width: 100%; transition: width 0.1s;"></div>
       </div>
       <button onclick="restartGame()">Yeni Macera</button>
     </div>
     <canvas id="gameCanvas" width="800" height="600"></canvas>
-    <p>🎮 WASD/Yön tuşları: Hareket | 📱 Dokun: Joystick<br>
-    🔄 1=Ateş Topu(AoE) 2=Ok(Hızlı) 3=Yıldırım(Zincir) | SPACE/Dokun: UZAKTAN SALDIR! 💥<br>
-    Level up = Skill'ler güçlenir + Yeni unlock! 🏆</p>
+    <p>🎮 WASD/Yön: Hareket | 🖱️ Mouse/parmakla NİŞAN AL → SPACE/DOKUN: SHOOT! 💥<br>
+    🔄 1=Ateş Topu(AoE patlama) 2=Ok(Hızlı) 3=Yıldırım(Zincir)<br>
+    Level up → Damage+Range BÜYÜR! 🏆 Boss'ları uzaktan erit!</p>
   </div>
   <script src="script.js"></script>
 </body>
