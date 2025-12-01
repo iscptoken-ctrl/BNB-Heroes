@@ -64,3 +64,11 @@ button {
 button:hover { transform: scale(1.05); }
 p { font-size: 1.1rem; margin-top: 10px; }
 @media (max-width: 900px) { #gameCanvas { width: 100vw; height: 60vh; max-width: 800px; max-height: 600px; } }
+#gameCanvas {
+  cursor: crosshair !important;
+}
+@media (pointer: coarse) {
+  #gameCanvas {
+    cursor: none;
+  }
+}
