@@ -364,11 +364,3 @@ function gameLoop() {
 
 updateUI();
 gameLoop();
-#gameCanvas {
-  cursor: crosshair !important;
-}
-@media (pointer: coarse) {
-  #gameCanvas {
-    cursor: none;
-  }
-}
