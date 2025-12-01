@@ -1,0 +1,66 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Arial Black', sans-serif;
+  background: linear-gradient(135deg, #8B4513, #DAA520, #B8860B, #CD853F);
+  color: #FFD700;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-shadow: 1px 1px 2px black;
+}
+.container {
+  text-align: center;
+  background: rgba(0,0,0,0.6);
+  padding: 20px;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+  border: 3px solid #FFD700;
+}
+h1 { font-size: 3rem; margin-bottom: 10px; color: #FFD700; text-shadow: 3px 3px 6px black; }
+#gameCanvas {
+  border: 4px solid #FFD700;
+  border-radius: 15px;
+  background: #0a0a0a;
+  box-shadow: 0 10px 30px rgba(255,215,0,0.4);
+  display: block;
+  margin: 20px auto;
+}
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+.health-bar {
+  width: 300px;
+  height: 25px;
+  background: #333;
+  border: 2px solid #FFD700;
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 0 10px;
+}
+#healthFill {
+  height: 100%;
+  background: linear-gradient(90deg, #FF0000, #FFFF00, #00FF00);
+  width: 100%;
+  transition: width 0.3s;
+}
+button {
+  padding: 10px 25px;
+  font-size: 1.1rem;
+  background: linear-gradient(45deg, #FF4500, #FFD700);
+  color: #000;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 5px 15px rgba(255,215,0,0.4);
+}
+button:hover { transform: scale(1.05); }
+p { font-size: 1.1rem; margin-top: 10px; }
+@media (max-width: 900px) { #gameCanvas { width: 100vw; height: 60vh; max-width: 800px; max-height: 600px; } }
