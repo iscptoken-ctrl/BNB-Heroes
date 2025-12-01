@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🗡️ İPEK YOLU RPG - SilkRoad Benzeri</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>🗡️ İPEK YOLU RPG</h1>
+    <div class="stats">
+      <div class="health-bar">
+        <div id="healthFill"></div>
+      </div>
+      <div>Level: <span id="level">1</span> | Exp: <span id="exp">0</span>/<span id="expNext">100</span></div>
+      <div>Düşman: <span id="enemyCount">0</span> | <button onclick="restartGame()">Yeni Macera</button></div>
+    </div>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <p>🎮 WASD / Yön tuşları ile hareket et. Düşmanlara çarpışarak öldür! Boss'lara dikkat! 📱 Dokunmatik uyumlu</p>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
