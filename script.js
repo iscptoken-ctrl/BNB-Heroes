@@ -1,238 +1,232 @@
-const canvas = document.getElementById('gameCanvas');
+const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 
-// UI Elements
-const energyFill = document.getElementById('energyFill');
-const energyEl = document.getElementById('energy');
-const goldEl = document.getElementById('gold');
-const levelEl = document.getElementById('level');
-const expEl = document.getElementById('exp');
-const expNextEl = document.getElementById('expNext');
-const enemyCountEl = document.getElementById('enemyCount');
-const damageVal = document.getElementById('damageVal');
-const rangeVal = document.getElementById('rangeVal');
-const damageCostEl = document.getElementById('damageCost');
-const rangeCostEl = document.getElementById('rangeCost');
-const fightBtn = document.getElementById('fightBtn');
-const upgradeBtn = document.getElementById('upgradeBtn');
-const upgradePanel = document.getElementById('upgradePanel');
-
-// Game State
-let energy = 100;
-let gold = 0;
-let player = {
-  x: canvas.width / 2 - 16,
-  y: canvas.height / 2 - 16,
-  width: 32,
-  height: 32,
-  damage: 20,
-  range: 120,
-  bob: 0
+// UI
+const screens = {
+  nickname: document.getElementById('nicknameScreen'),
+  game: document.getElementById('gameScreen')
 };
+
+// Data (localStorage)
+let player = {
+  nick: '',
+  level: 1,
+  exp: 0,
+  expNext: 100,
+  gold: 0,
+
+  // Main Stats (ölünce sıfırlanmaz)
+  mHealth: 100, mAttack: 1, mDefence: 1, mRegen: 1,
+
+  // In-Game Stats (ölünce reset)
+  hp: 100, maxHp: 100,
+  damage: 5,
+  radius: 80,
+  regen: 5, // saniyede değil, 5 saniyede +regen
+  posY: canvas.height - 100, // harita konumu (kuzeye gittikçe azalır)
+  lastMove: Date.now()
+};
+
 let enemies = [];
-let isFighting = false;
-let showUpgrades = false;
-let level = 1;
-let exp = 0;
-let expToNext = 100;
+let paused = false;
+let gameOver = false;
 
-// Sprite'lar (eski player ve enemy)
-const playerBase64 = 'iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABQklEQVRYhWNgGAUjHTCSq/HWUoX/yHy16AdkmUWWJnTLKXEEyRpwWU6uI0hSTMhychxBtEKY5apR9xkYGBgYbi9TRJFHFyfWEUzEOoBWgIVUDeg+JyROCAx4CBDtAFicblzwGa+6jQs+0yYRdrsKw3OAfwIvXgfAQOnutwTNJ6gA2WJCDlCLfsCITT0+h+BMhNgMQraIlKIYZhY2h2A4AJ/FMPD/OsN/BoYHGGKMmvhDFJtDqJoLIA4jDQydbDhsHUBSUVwy6S3RanryhKnnAGIsJtcheB1QuvstIzkpG92MAwcO/D/dGoxVHmsaKN39lhGWVwnlbXwAptfBwYHxq3Uug2n1WsIOwFZakeMIXHrQzSfJYGKjA5flDQ0N/x0cHBgcHBzg8iTlApjBuBxCSXTRDRw4cOD/gQMHKErYo4CqAABSyIHYXpwtTgAAAABJRU5ErkJggg==';
-const enemyBase64 = 'iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAYAAAByDd+UAAAA9klEQVRIie2UQRKCMAxFU8YT0QVeSQ+kV5JFudJ3oZ0JIW1SpjiO419Rkv5HQlOiX1do3fAYR/D1eVmaPJqSJWwP1J1YgrVCXUkAQEQ0x6jGp5ReZiGYfmYCAFD2ATbQKSXicQs6WMDeMoFzjESAWp0nLmW21DosUtbhcR0aL9RzUr9zLDg0jwD/X10HH0TryiAKFVMQDM+TG+RU3lcCqy9dsFxpZc41aLFCU/YtVvqItfa2sgIIYk10Y5BLR9idPV/frIEvZNIROvTy5oXkLg5asEeVpbFYVSih1hCXQLV9ZkuzQc2kliPbugFqfdeMPR/y10f0BG1uWAACK0I/AAAAAElFTkSuQmCC';
-let playerImg = new Image(); playerImg.src = 'data:image/png;base64,' + playerBase64;
-let enemyImg = new Image(); enemyImg.src = 'data:image/png;base64,' + enemyBase64;
+// Load or new player
+if (localStorage.getItem('bnbHero')) {
+  Object.assign(player, JSON.parse(localStorage.getItem('bnbHero')));
+  resetInGameStats();
+  showGame();
+} 
 
-// Çarpışma
-function collides(a, b) {
-  return a.x < b.x + b.width && a.x + a.width > b.x &&
-         a.y < b.y + b.height && a.y + a.height > b.y;
-}
-function distanceToPlayer(ex) {
-  return Math.hypot(player.x + 16 - ex.x - ex.width/2, player.y + 16 - ex.y - ex.height/2);
+function saveNickname() {
+  let nick = document.getElementById('nicknameInput').value.trim();
+  if (nick.length < 3) return alert('Min 3 harf!');
+  player.nick = nick;
+  localStorage.setItem('bnbHero', JSON.stringify(player));
+  resetInGameStats();
+  showGame();
 }
 
-// Enerji Regen (dakikada 1)
-setInterval(() => {
-  if (energy < 100) {
-    energy++;
-    updateUI();
-  }
-}, 60000);
-
-// UI Update
-function updateUI() {
-  energyFill.style.width = (energy / 100 * 100) + '%';
-  energyEl.textContent = energy;
-  goldEl.textContent = gold;
-  levelEl.textContent = level;
-  expEl.textContent = exp;
-  expNextEl.textContent = expToNext;
-  enemyCountEl.textContent = enemies.length;
-  damageVal.textContent = player.damage;
-  rangeVal.textContent = player.range;
-  damageCostEl.textContent = Math.floor(player.damage * 2.5);
-  rangeCostEl.textContent = Math.floor(player.range * 1.5);
-  fightBtn.textContent = isFighting ? 'STOP' : 'FIGHT Başlat (10⚡)';
-  fightBtn.disabled = energy < 10 && !isFighting;
-}
-
-// Fight Toggle
-function toggleFight() {
-  if (!isFighting && energy >= 10) {
-    energy -= 10;
-    isFighting = true;
-    upgradeBtn.style.display = 'inline-block';
-  } else {
-    isFighting = false;
-  }
+function showGame() {
+  screens.nickname.classList.add('hidden');
+  screens.game.classList.remove('hidden');
+  document.getElementById('nick').textContent = player.nick;
   updateUI();
+  gameLoop();
 }
 
-// Upgrade Toggle
-function toggleUpgrades() {
-  showUpgrades = !showUpgrades;
-  upgradePanel.style.display = showUpgrades ? 'block' : 'none';
-  upgradeBtn.textContent = showUpgrades ? 'Oyuna Dön' : 'Upgrade Menüsü';
+function resetInGameStats() {
+  player.hp = 100 + (player.level-1)*5 + player.mHealth;
+  player.maxHp = player.hp;
+  player.damage = 1 + (player.level-1) + player.mAttack;
+  player.radius = 80;
+  player.regen = 5 + player.mRegen;
+  player.posY = canvas.height - 100;
+  enemies = [];
+  gameOver = false;
 }
 
-// Upgrades
-function upgradeDamage() {
-  let cost = Math.floor(player.damage * 2.5);
-  if (gold >= cost) {
-    gold -= cost;
-    player.damage += 5;
-    updateUI();
+function save() { localStorage.setItem('bnbHero', JSON.stringify(player)); }
+function updateUI() {
+  document.getElementById('level').textContent = player.level;
+  document.getElementById('exp').textContent = player.exp;
+  document.getElementById('expNext').textContent = player.expNext;
+  document.getElementById('gold').textContent = player.gold;
+  document.getElementById('hpText').textContent = `${player.hp}/${player.maxHp}`;
+  document.getElementById('hpFill').style.width = (player.hp/player.maxHp*100)+'%';
+
+  // Main Stats
+  document.getElementById('mHealth').textContent = player.mHealth;
+  document.getElementById('mAttack').textContent = player.mAttack;
+  document.getElementById('mDefence').textContent = player.mDefence;
+  document.getElementById('mRegen').textContent = player.mRegen;
+
+  // Skill costs
+  document.getElementById('cHealth').textContent = 1000 * Math.pow(2, player.mHealth - 100);
+  document.getElementById('cAttack').textContent = 1000 * Math.pow(2, player.mAttack - 1);
+  document.getElementById('cDefence').textContent = 1000 * Math.pow(2, player.mDefence - 1);
+  document.getElementById('cRegen').textContent = 10000 * Math.pow(2, player.mRegen - 1);
+
+  // In-Game Skills
+  document.getElementById('sRadius').textContent = player.radius;
+  document.getElementById('sDamage').textContent = player.damage;
+  document.getElementById('sHp').textContent = player.maxHp;
+  document.getElementById('sRegen').textContent = player.regen;
+
+  document.getElementById('cRadius').textContent = 100 * Math.pow(2, Math.floor(player.radius/10) - 8);
+  document.getElementById('cDamage').textContent = 100 * Math.pow(2, player.damage - 5);
+  document.getElementById('cHp').textContent = 100 * Math.pow(2, Math.floor((player.maxHp-100)/5));
+  document.getElementById('cRegenSkill').textContent = 1000 * Math.pow(2, player.regen - 5);
+}
+
+function upgrade(type) {
+  let cost = 0;
+  if (type==='health') cost = 1000 * Math.pow(2, player.mHealth - 100);
+  if (type==='attack') cost = 1000 * Math.pow(2, player.mAttack - 1);
+  if (type==='defence') cost = 1000 * Math.pow(2, player.mDefence - 1);
+  if (type==='regen') cost = 10000 * Math.pow(2, player.mRegen - 1);
+  if (player.gold >= cost) {
+    player.gold -= cost;
+    player[`m${type.charAt(0).toUpperCase() + type.slice(1)}`]++;
+    player.hp = player.maxHp = 100 + (player.level-1)*5 + player.mHealth + (player.maxHp - 100 - player.mHealth - (player.level-1)*5);
+    save(); updateUI();
   }
 }
-function upgradeRange() {
-  let cost = Math.floor(player.range * 1.5);
-  if (gold >= cost) {
-    gold -= cost;
-    player.range += 20;
-    updateUI();
+
+function upgradeSkill(type) {
+  let cost = 100 * Math.pow(2, type==='radius' ? Math.floor(player.radius/10)-8 : type==='damage' ? player.damage-5 : type==='hp' ? Math.floor((player.maxHp-100)/5) : player.regen-5);
+  if (type==='regen') cost = 1000 * Math.pow(2, player.regen-5);
+  if (player.gold >= cost) {
+    player.gold -= cost;
+    if (type==='radius') player.radius += 10;
+    if (type==='damage') player.damage += 1;
+    if (type==='hp') player.maxHp += 5, player.hp += 5;
+    if (type==='regen') player.regen += 1;
+    save(); updateUI();
   }
 }
 
-// Update Logic
-function update() {
-  if (!isFighting) return;
+function togglePause() {
+  paused = !paused;
+  document.getElementById('pauseBtn').textContent = paused ? 'RESUME' : 'PAUSE';
+}
 
-  player.bob += 0.15;
+function openMenu(menu) { document.getElementById(menu).classList.remove('hidden'); }
+function closeMenu() { document.querySelectorAll('.menu').forEach(m=>m.classList.add('hidden')); }
 
-  // Düşman Spawn (level'e göre hızlanır)
-  if (Math.random() < 0.02 + level * 0.005) {
-    let isBoss = Math.random() < 0.1;
+// Oyun döngüsü
+let lastRegen = Date.now();
+function gameLoop() {
+  if (paused || gameOver) { requestAnimationFrame(gameLoop); return; }
+
+  // 2 dk hareketsizlik → pause
+  if (Date.now() - player.lastMove > 120000) paused = true;
+
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  // Harita (kuzeye gittikçe zor)
+  const zone = Math.floor((canvas.height - player.posY) / 50);
+  player.posY -= 0.8; // otomatik yukarı yürüyor
+
+  // Regen
+  if (Date.now() - lastRegen > 5000) {
+    player.hp = Math.min(player.hp + player.regen, player.maxHp);
+    lastRegen = Date.now();
+  }
+
+  // Spawn düşman
+  if (Math.random() < 0.03 + zone*0.005) {
+    const types = [70, 25, 5]; // normal, champion, giant
+    let rand = Math.random()*100;
+    let type = rand < 70 ? 'normal' : rand < 95 ? 'champion' : 'giant';
+    const lvl = zone + 1;
     enemies.push({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      width: isBoss ? 45 : 28,
-      height: isBoss ? 45 : 28,
-      health: (isBoss ? 150 : 40) + level * 10,
-      maxHealth: (isBoss ? 150 : 40) + level * 10,
-      speed: (isBoss ? 0.8 : 1.5) + level * 0.1,
-      isBoss: isBoss
+      x: Math.random()*(canvas.width-50)+25,
+      y: canvas.height,
+      type, lvl,
+      hp: type==='normal' ? lvl*10 : type==='champion' ? lvl*30 : lvl*100,
+      maxHp: type==='normal' ? lvl*10 : type==='champion' ? lvl*30 : lvl*100,
+      speed: 0.7 + Math.random()*0.6
     });
   }
 
-  // Düşmanlar player'a koş
-  for (let i = enemies.length - 1; i >= 0; i--) {
-    let enemy = enemies[i];
-    let dx = (player.x + 16) - (enemy.x + enemy.width / 2);
-    let dy = (player.y + 16) - (enemy.y + enemy.height / 2);
-    let dist = Math.hypot(dx, dy);
-    if (dist > 0) {
-      enemy.x += (dx / dist) * enemy.speed;
-      enemy.y += (dy / dist) * enemy.speed;
+  // Düşman hareket + saldırı
+  for (let i=enemies.length-1; i>=0; i--) {
+    let e = enemies[i];
+    e.y -= e.speed + player.posY*0.001;
+
+    // AoE damage
+    if (Math.hypot(e.x - canvas.width/2, e.y - player.posY) < player.radius) {
+      e.hp -= player.damage / 10;
     }
 
-    // Auto AoE Attack (range içindeyse)
-    if (dist < player.range) {
-      enemy.health -= player.damage;
+    // Düşman hero’ya çarptı
+    if (Math.hypot(e.x - canvas.width/2, e.y - player.posY) < 30) {
+      player.hp -= e.lvl * 5 * (1 - player.mDefence*0.05);
     }
 
-    // Öldü mü?
-    if (enemy.health <= 0) {
-      gold += enemy.isBoss ? 50 + level * 10 : 5 + level * 2;
-      exp += enemy.isBoss ? 50 : 10;
-      enemies.splice(i, 1);
-      checkLevelUp();
+    if (e.hp <= 0) {
+      player.gold += type==='giant' ? 10+Math.floor(Math.random()*40) : type==='champion' ? 5+Math.floor(Math.random()*15) : 1+Math.floor(Math.random()*5);
+      player.exp += type==='giant' ? e.lvl*20 : type==='champion' ? e.lvl*10 : e.lvl*5;
+      enemies.splice(i,1);
+
+      // Level up
+      if (player.exp >= player.expNext) {
+        player.level++;
+        player.exp = 0;
+        player.expNext = Math.floor(player.expNext * 2);
+        player.maxHp += 5;
+        player.hp += 5;
+      }
     }
   }
 
-  // Level Up
-  function checkLevelUp() {
-    if (exp >= expToNext) {
-      level++;
-      exp = 0;
-      expToNext = Math.floor(expToNext * 1.3);
-      player.damage += 3;
-      player.range += 10;
-    }
-  }
-}
-
-// Draw
-function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  // Arka plan (çöl efekti)
-  ctx.fillStyle = '#D2B48C';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  for (let i = 0; i < 30; i++) {
-    ctx.fillStyle = `rgba(255, 215, 0, ${Math.random() * 0.3})`;
-    ctx.fillRect(Math.random() * canvas.width, Math.random() * canvas.height, 3, 3);
+  // Hero ölürse
+  if (player.hp <= 0) {
+    alert(`Öldün! Level ${player.level}'de bitti. Tekrar başlıyorsun...`);
+    resetInGameStats();
   }
 
-  // Range Circle (glow)
-  if (isFighting) {
-    ctx.save();
-    ctx.shadowColor = '#00FF00';
-    ctx.shadowBlur = 20;
-    ctx.strokeStyle = '#00FF88';
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.arc(player.x + 16, player.y + 16, player.range, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.restore();
-  }
+  // Çizim
+  // Hero (ortada sabit)
+  ctx.fillStyle = '#ffd700';
+  ctx.fillRect(canvas.width/2-20, player.posY-30, 40, 60);
+  ctx.fillStyle = '#000';
+  ctx.fillText('BNB', canvas.width/2-15, player.posY-10);
 
-  // Enemies
-  enemies.forEach(enemy => {
-    ctx.shadowColor = enemy.isBoss ? 'purple' : 'red';
-    ctx.shadowBlur = 15;
-    ctx.drawImage(enemyImg, enemy.x, enemy.y, enemy.width, enemy.height);
-    ctx.shadowBlur = 0;
+  // Radius
+  ctx.strokeStyle = 'rgba(0,255,0,0.3)';
+  ctx.beginPath();
+  ctx.arc(canvas.width/2, player.posY, player.radius, 0, Math.PI*2);
+  ctx.stroke();
 
-    // Health bar
-    let barW = enemy.width;
-    ctx.fillStyle = '#333';
-    ctx.fillRect(enemy.x, enemy.y - 8, barW, 5);
-    ctx.fillStyle = enemy.health / enemy.maxHealth > 0.5 ? '#00FF00' : '#FF0000';
-    ctx.fillRect(enemy.x, enemy.y - 8, (enemy.health / enemy.maxHealth) * barW, 5);
+  // Düşmanlar
+  enemies.forEach(e => {
+    ctx.fillStyle = e.type==='giant' ? 'purple' : e.type==='champion' ? 'orange' : 'red';
+    ctx.fillRect(e.x-15, e.y-15, 30, 30);
   });
 
-  // Player (sabit ortada, bob animasyon)
-  let bobY = Math.sin(player.bob) * 3;
-  ctx.shadowColor = 'gold';
-  ctx.shadowBlur = 25;
-  ctx.shadowOffsetY = 8;
-  ctx.drawImage(playerImg, player.x, player.y + bobY, player.width, player.height);
-  ctx.shadowBlur = 0;
-
-  ctx.fillStyle = '#FFF';
-  ctx.font = 'bold 16px Arial';
-  ctx.textAlign = 'center';
-  ctx.fillText('HERO', player.x + 16, player.y + 50);
-  ctx.textAlign = 'left';
-}
-
-// Game Loop
-function gameLoop() {
-  update();
-  draw();
+  updateUI();
+  save();
   requestAnimationFrame(gameLoop);
 }
-
-// Başlat
-updateUI();
-gameLoop();
