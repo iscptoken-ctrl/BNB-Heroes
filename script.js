@@ -2,7 +2,7 @@ let bcr = 0;
 let energy = 10000;
 
 let bcrPerClick = 1;
-let energyPerClick = 100;
+let energyPerClick = 10;
 
 // Levels
 let hodlLvl = 0;
