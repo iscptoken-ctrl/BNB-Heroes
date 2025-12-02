@@ -1,131 +1,93 @@
-let bcr = 0;
-let energy = 10000;
-let maxEnergy = 10000;
-
-let cd1 = 0;
-let mvs = 0;
-let usdt = 0;
-
-let shops = {
-    house: { count: 0, cost: 500, rate: 1 },
-    market: { count: 0, cost: 1500, rate: 2 },
-    garage: { count: 0, cost: 5000, rate: 4 },
-    hotel: { count: 0, cost: 10000, rate: 5 },
-    pharmacy: { count: 0, cost: 10000, rate: 0 } // Pharmacy affects passive critical chance
+// Kullanıcı veri örneği
+let user = {
+    id: 1,
+    username: "Player1",
+    BCR: 0,
+    CD1: 0,
+    MVS: 0,
+    USDT: 0,
+    items: {House:0, Market:0, Garage:0, Hotel:0, Pharmacy:0}
 };
 
-// SHOW SCREEN
-function showScreen(name) {
-    document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
-    document.getElementById(name).classList.remove("hidden");
-}
+// API endpoint
+const API = "http://localhost:5000";
 
-// TAP CLICK
-function tap() {
-    if (energy < 100) return;
-    energy -= 100;
-    bcr += 100;
-    updateUI();
-}
-
-// BUY SHOP
-function buyShop(name) {
-    let shop = shops[name];
-    if (bcr < shop.cost) return;
-    bcr -= shop.cost;
-    shop.count++;
-    updateUI();
-}
-
-// PASSIVE INCOME
-setInterval(() => {
-    let totalRate = calculatePassive();
-    let critChance = shops.pharmacy.count * 0.01; // Pharmacy x2 chance on passive
-    if (Math.random() < critChance) totalRate *= 2;
-    bcr += totalRate;
-    energy = Math.min(maxEnergy, energy + 5);
-    updateUI();
-}, 1000);
-
-function calculatePassive() {
-    return Object.values(shops).reduce((sum, s) => sum + s.count * s.rate, 0);
-}
-
-// CONVERT FUNCTIONS
-function convertBcr() {
-    if (bcr >= 100000000) {
-        bcr -= 100000000;
-        cd1 += 1;
-        updateUI();
+// Menüler
+function showProfile(){
+    let html = `<h2>👤 Profile</h2>
+        <p>BCR: ${user.BCR}</p>
+        <p>CD1: ${user.CD1}</p>
+        <p>MVS: ${user.MVS}</p>
+        <p>USDT: ${user.USDT}</p>
+        <h3>Items</h3>
+        <ul>`;
+    for(let item in user.items){
+        html+= `<li>${item}: ${user.items[item]}</li>`;
     }
+    html+="</ul>";
+    document.getElementById("game-area").innerHTML = html;
 }
 
-function convertCd1() {
-    if (cd1 >= 10) {
-        cd1 -= 10;
-        mvs += 1;
-        updateUI();
+function showTown(){
+    let html = `<h2>🏘️ Town</h2><ul>`;
+    for(let item in user.items){
+        html+= `<li>${item} - owned: ${user.items[item]}</li>`;
     }
+    html+="</ul>";
+    document.getElementById("game-area").innerHTML = html;
 }
 
-// BURN FUNCTIONS
-function burnCd1() {
-    if (cd1 >= 1) {
-        cd1 -= 1;
-        usdt += 1;
-        updateUI();
-    }
+function showConverts(){
+    let html = `<h2>💱 BCR Converts</h2>`;
+    html+=`<button onclick="convertBCR()">Convert 100M BCR → 1 CD1</button>`;
+    html+=`<button onclick="convertCD1()">Convert 10 CD1 → 1 MVS</button>`;
+    document.getElementById("game-area").innerHTML = html;
 }
 
-function burnMvs() {
-    if (mvs >= 1) {
-        mvs -= 1;
-        usdt += 10;
-        updateUI();
-    }
+function convertBCR(){
+    if(user.BCR>=100_000_000){
+        user.BCR-=100_000_000;
+        user.CD1+=1;
+        alert("Converted 100M BCR → 1 CD1");
+    } else alert("Not enough BCR");
+    showProfile();
 }
 
-// UPDATE UI
-function updateUI() {
-    document.getElementById("energy").innerText = Math.floor(energy);
-    document.getElementById("bcr").innerText = Math.floor(bcr);
-    document.getElementById("townBcr").innerText = Math.floor(bcr);
-    document.getElementById("profileBcr").innerText = Math.floor(bcr);
-    document.getElementById("profileCd1").innerText = cd1;
-    document.getElementById("profileMvs").innerText = mvs;
-    document.getElementById("profileUsdt").innerText = usdt;
-
-    // Profile items
-    document.getElementById("profileHouse").innerText = shops.house.count;
-    document.getElementById("profileMarket").innerText = shops.market.count;
-    document.getElementById("profileGarage").innerText = shops.garage.count;
-    document.getElementById("profileHotel").innerText = shops.hotel.count;
-    document.getElementById("profilePharmacy").innerText = shops.pharmacy.count;
-
-    // Town counts
-    document.getElementById("houseCount").innerText = shops.house.count;
-    document.getElementById("marketCount").innerText = shops.market.count;
-    document.getElementById("garageCount").innerText = shops.garage.count;
-    document.getElementById("hotelCount").innerText = shops.hotel.count;
-    document.getElementById("pharmacyCount").innerText = shops.pharmacy.count;
-
-    // Convert
-    document.getElementById("convertBcr").innerText = Math.floor(bcr);
-    document.getElementById("convertCd1").innerText = cd1;
-    document.getElementById("convertMvs").innerText = mvs;
-
-    // Burn
-    document.getElementById("burnCd1").innerText = cd1;
-    document.getElementById("burnMvs").innerText = mvs;
-    document.getElementById("burnUsdt").innerText = usdt;
-
-    // Total shops
-    let totalShops = Object.values(shops).reduce((sum, s) => sum + s.count, 0);
-    document.getElementById("totalShops").innerText = totalShops;
-    document.getElementById("townShops").innerText = totalShops;
-
-    // Passive income
-    document.getElementById("passiveRate").innerText = calculatePassive();
+function convertCD1(){
+    if(user.CD1>=10){
+        user.CD1-=10;
+        user.MVS+=1;
+        alert("Converted 10 CD1 → 1 MVS");
+    } else alert("Not enough CD1");
+    showProfile();
 }
 
-updateUI();
+function showBurn(){
+    let html = `<h2>🔥 Burn</h2>`;
+    html+=`<button onclick="burnCD1()">Burn 1 CD1 → 1 USDT</button>`;
+    html+=`<button onclick="burnMVS()">Burn 1 MVS → 10 USDT</button>`;
+    document.getElementById("game-area").innerHTML = html;
+}
+
+function burnCD1(){
+    if(user.CD1>=1){ user.CD1-=1; user.USDT+=1; alert("Burned 1 CD1 → 1 USDT");}
+    else alert("Not enough CD1");
+    showProfile();
+}
+
+function burnMVS(){
+    if(user.MVS>=1){ user.MVS-=1; user.USDT+=10; alert("Burned 1 MVS → 10 USDT");}
+    else alert("Not enough MVS");
+    showProfile();
+}
+
+function showLeaderboard(){
+    fetch(`${API}/leaderboard`)
+        .then(res=>res.json())
+        .then(data=>{
+            let html=`<h2>🏆 Leaderboard</h2><ol>`;
+            data.forEach(u=>html+=`<li>${u[0]} - Total Tokens: ${u[1]}</li>`);
+            html+="</ol>";
+            document.getElementById("game-area").innerHTML = html;
+        });
+}
