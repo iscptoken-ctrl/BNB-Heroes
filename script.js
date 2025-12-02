@@ -1,111 +1,104 @@
 let bcr = 0;
 let energy = 10000;
+let maxEnergy = 10000;
 
-let bcrPerClick = 10;
-let energyPerClick = 10;
+let hodlLevel = 0;
+let snipeLevel = 0;
+let energyLevel = 0;
 
-// Levels
-let hodlLvl = 0;
-let snipeLvl = 0;
-let energyLvl = 0;
+let baseClick = 1;
 
-// Cost per skill
-let hodlCost = 20;
-let snipeCost = 20;
-let energyCost = 20;
+let skillCosts = {
+    hodl: 20,
+    snipe: 20,
+    energy: 20
+};
 
-// Passive income
-let houses = 0;
-let markets = 0;
+let buildings = {
+    house: { cost: 500, income: 1 },
+    market: { cost: 1500, income: 2 },
+    garage: { cost: 5000, income: 4 },
+    hotel: { cost: 10000, income: 5 }
+};
 
-// Update UI
-function updateUI() {
-    document.getElementById("bcr").innerText = bcr;
-    document.getElementById("energy").innerText = Math.floor(energy);
+let passiveIncome = 0;
 
-    document.getElementById("hodlLvl").innerText = hodlLvl;
-    document.getElementById("snipeLvl").innerText = snipeLvl;
-    document.getElementById("energyLvl").innerText = energyLvl;
+/* ------------------- TAP SYSTEM ------------------- */
+document.getElementById("tapButton").addEventListener("click", () => {
+    if (energy < 100) return;
 
-    document.getElementById("hodlCost").innerText = hodlCost;
-    document.getElementById("snipeCost").innerText = snipeCost;
-    document.getElementById("energyCost").innerText = energyCost;
+    energy -= 100;
 
-    document.getElementById("houseCount").innerText = houses;
-    document.getElementById("marketCount").innerText = markets;
-}
+    let gain = baseClick;
 
-// CLICK
-document.getElementById("clickBtn").addEventListener("click", () => {
-    if (energy < energyPerClick) return;
+    gain *= 1 + hodlLevel * 0.01;
 
-    energy -= energyPerClick;
-
-    let gain = bcrPerClick;
-
-    // Snipe chance x2
-    if (Math.random() * 100 < snipeLvl) {
+    if (Math.random() < snipeLevel * 0.01) {
         gain *= 2;
     }
 
     bcr += gain;
+
     updateUI();
 });
 
-// SKILLS
-function upgradeSkill(type) {
-    if (type === "hodl" && bcr >= hodlCost) {
-        bcr -= hodlCost;
-        hodlLvl++;
-        hodlCost *= 2;
-        bcrPerClick *= 1.01;
+/* ------------------- SKILLS ------------------- */
+function upgradeSkill(skill) {
+    if (bcr < skillCosts[skill]) return;
+
+    bcr -= skillCosts[skill];
+
+    if (skill === "hodl") hodlLevel++;
+    if (skill === "snipe") snipeLevel++;
+    if (skill === "energy") {
+        energyLevel++;
+        maxEnergy = Math.floor(maxEnergy * 1.01);
+        energy = maxEnergy;
     }
-    else if (type === "snipe" && bcr >= snipeCost) {
-        bcr -= snipeCost;
-        snipeLvl++;
-        snipeCost *= 2;
-    }
-    else if (type === "energy" && bcr >= energyCost) {
-        bcr -= energyCost;
-        energyLvl++;
-        energyCost *= 2;
-        energy *= 1.01;
-    }
+
+    skillCosts[skill] *= 2;
+    updateUI();
+}
+
+/* ------------------- TOWN SHOP ------------------- */
+function buyItem(item) {
+    let shop = buildings[item];
+
+    if (bcr < shop.cost) return;
+
+    bcr -= shop.cost;
+
+    passiveIncome += shop.income;
 
     updateUI();
 }
 
-// TOWN
-function buyBuilding(type) {
-    if (type === "house" && bcr >= 500) {
-        bcr -= 500;
-        houses++;
-    }
-    if (type === "market" && bcr >= 1500) {
-        bcr -= 1500;
-        markets++;
-    }
-
-    updateUI();
-}
-
-// Passive BCR
+/* ------------------- PASSIVE INCOME ------------------- */
 setInterval(() => {
-    bcr += houses * 1;
-    bcr += markets * 2;
+    bcr += passiveIncome;
     updateUI();
 }, 1000);
 
-// Energy regen +10
+/* ------------------- ENERGY REGEN ------------------- */
 setInterval(() => {
-    energy += 10;
-    updateUI();
-}, 1000);
+    if (energy < maxEnergy) {
+        energy += Math.ceil(maxEnergy * 0.005);
+        if (energy > maxEnergy) energy = maxEnergy;
+        updateUI();
+    }
+}, 500);
 
-// Tabs
-function openTab(id) {
-    document.querySelectorAll('.tab').forEach(tab => tab.style.display = 'none');
-    document.getElementById(id).style.display = 'block';
+/* ------------------- UI ------------------- */
+function openTab(tab) {
+    document.querySelectorAll(".tab").forEach(t => t.style.display = "none");
+    document.getElementById(tab).style.display = "block";
 }
 
-updateUI();
+function updateUI() {
+    document.getElementById("bcr").innerText = Math.floor(bcr);
+    document.getElementById("energy").innerText = Math.floor(energy);
+
+    document.getElementById("hodlCost").innerText = skillCosts.hodl;
+    document.getElementById("snipeCost").innerText = skillCosts.snipe;
+    document.getElementById("energyCost").innerText = skillCosts.energy;
+}
