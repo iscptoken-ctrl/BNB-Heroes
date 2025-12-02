@@ -1,80 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BNB Heroes</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<div class="container">
-
-    <h1>BNB Heroes</h1>
-
-    <div class="stats">
-        <p><strong>BCR:</strong> <span id="bcr">0</span></p>
-        <p><strong>Energy:</strong> <span id="energy">10000</span>/10000</p>
+    <div id="menu">
+        <button onclick="showScreen('game')">Game</button>
+        <button onclick="showScreen('skills')">Skills</button>
+        <button onclick="showScreen('town')">BCR Town</button>
+        <button onclick="showScreen('profile')">Profile</button>
     </div>
 
-    <div class="hero-area">
-        <img id="hero" src="https://i.imgur.com/sJZ8qDP.png">
-        <button id="tapButton">TAP</button>
-    </div>
+    <!-- GAME SCREEN -->
+    <div id="game" class="screen">
+        <h2>BNB Heroes</h2>
+        <img id="hero" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAATYAAACiCAMAAAD84hF6AAAAh1..." />
+        <p>Energy: <span id="energy">0</span></p>
+        <p>BCR: <span id="bcr">0</span></p>
+        <button id="clickBtn" onclick="tap()">Tap</button>
 
-    <div class="menu">
-        <button onclick="openTab('skills')">Skills</button>
-        <button onclick="openTab('town')">BCR Town</button>
+        <h3>Passive Income: <span id="passiveRate">0</span>/sec</h3>
+        <h3>Total Owned Shops: <span id="totalShops">0</span></h3>
     </div>
 
     <!-- SKILLS -->
-    <div id="skills" class="tab">
+    <div id="skills" class="screen hidden">
         <h2>Skills</h2>
 
-        <div class="skill">
-            <span>HODL (+1% BCR per click)</span>
-            <button onclick="upgradeSkill('hodl')">Upgrade (<span id="hodlCost">20</span> BCR)</button>
+        <div class="skillBox">
+            <h3>HODL</h3>
+            <p>+1% BCR per click</p>
+            <p>Cost: <span id="costHodl">20</span> BCR</p>
+            <button onclick="upgradeSkill('hodl')">Upgrade</button>
         </div>
 
-        <div class="skill">
-            <span>Snipe (+1% x2 chance)</span>
-            <button onclick="upgradeSkill('snipe')">Upgrade (<span id="snipeCost">20</span> BCR)</button>
+        <div class="skillBox">
+            <h3>Snipe</h3>
+            <p>+1% chance for x2 BCR</p>
+            <p>Cost: <span id="costSnipe">20</span> BCR</p>
+            <button onclick="upgradeSkill('snipe')">Upgrade</button>
         </div>
 
-        <div class="skill">
-            <span>Energy (+1% max energy)</span>
-            <button onclick="upgradeSkill('energy')">Upgrade (<span id="energyCost">20</span> BCR)</button>
+        <div class="skillBox">
+            <h3>Energy</h3>
+            <p>+1% Max Energy</p>
+            <p>Cost: <span id="costEnergy">20</span> BCR</p>
+            <button onclick="upgradeSkill('energy')">Upgrade</button>
         </div>
     </div>
 
     <!-- TOWN -->
-    <div id="town" class="tab">
+    <div id="town" class="screen hidden">
         <h2>BCR Town</h2>
 
-        <div class="shop">
-            <span>House (500 BCR) → +1/sec</span>
-            <button onclick="buyItem('house')">Buy</button>
+        <p>BCR: <span id="townBcr">0</span></p>
+        <p>Total Owned: <span id="townShops">0</span></p>
+
+        <div class="shopBox">
+            <h3>House</h3>
+            <p>500 BCR - 1/sec</p>
+            <button onclick="buyShop('house')">Buy</button>
         </div>
 
-        <div class="shop">
-            <span>Market (1500 BCR) → +2/sec</span>
-            <button onclick="buyItem('market')">Buy</button>
+        <div class="shopBox">
+            <h3>Market</h3>
+            <p>1500 BCR - 2/sec</p>
+            <button onclick="buyShop('market')">Buy</button>
         </div>
 
-        <div class="shop">
-            <span>Garage (5000 BCR) → +4/sec</span>
-            <button onclick="buyItem('garage')">Buy</button>
+        <div class="shopBox">
+            <h3>Garage</h3>
+            <p>5000 BCR - 4/sec</p>
+            <button onclick="buyShop('garage')">Buy</button>
         </div>
 
-        <div class="shop">
-            <span>Hotel (10000 BCR) → +5/sec</span>
-            <button onclick="buyItem('hotel')">Buy</button>
+        <div class="shopBox">
+            <h3>Hotel</h3>
+            <p>10000 BCR - 5/sec</p>
+            <button onclick="buyShop('hotel')">Buy</button>
         </div>
-
     </div>
 
-</div>
+    <!-- PROFILE -->
+    <div id="profile" class="screen hidden">
+        <h2>Profile</h2>
+        <p>Total Passive Income: <span id="profilePassive">0</span>/sec</p>
+        <p>Total Shops Owned: <span id="profileTotal">0</span></p>
+    </div>
 
-<script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
