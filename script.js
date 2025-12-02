@@ -31,7 +31,7 @@ document.getElementById("tapButton").addEventListener("click", () => {
 
     let gain = baseClick;
 
-    gain *= 1 + hodlLevel * 0.01;
+    gain *= 100 + hodlLevel * 0.01;
 
     if (Math.random() < snipeLevel * 0.01) {
         gain *= 2;
