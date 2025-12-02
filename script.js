@@ -6,7 +6,7 @@ let hodlLevel = 0;
 let snipeLevel = 0;
 let energyLevel = 0;
 
-let baseClick = 1;
+let baseClick = 10;
 
 let skillCosts = {
     hodl: 20,
@@ -27,7 +27,7 @@ let passiveIncome = 0;
 document.getElementById("tapButton").addEventListener("click", () => {
     if (energy < 100) return;
 
-    energy -= 100;
+    energy -= 10;
 
     let gain = baseClick;
 
