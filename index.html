@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BNB Heroes</title>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div id="menu">
-        <button onclick="showScreen('game')">Game</button>
-        <button onclick="showScreen('skills')">Skills</button>
-        <button onclick="showScreen('town')">BCR Town</button>
-        <button onclick="showScreen('profile')">Profile</button>
+        <button onclick="showScreen('game')">🎮 Game</button>
+        <button onclick="showScreen('town')">🏘️ Town</button>
+        <button onclick="showScreen('profile')">👤 Profile</button>
+        <button onclick="showScreen('convert')">🔄 BCR Converts</button>
+        <button onclick="showScreen('burn')">🔥 Burn</button>
     </div>
 
     <!-- GAME SCREEN -->
@@ -22,74 +23,90 @@
         <p>Energy: <span id="energy">0</span></p>
         <p>BCR: <span id="bcr">0</span></p>
         <button id="clickBtn" onclick="tap()">Tap</button>
-
         <h3>Passive Income: <span id="passiveRate">0</span>/sec</h3>
         <h3>Total Owned Shops: <span id="totalShops">0</span></h3>
     </div>
 
-    <!-- SKILLS -->
-    <div id="skills" class="screen hidden">
-        <h2>Skills</h2>
-
-        <div class="skillBox">
-            <h3>HODL</h3>
-            <p>+1% BCR per click</p>
-            <p>Cost: <span id="costHodl">20</span> BCR</p>
-            <button onclick="upgradeSkill('hodl')">Upgrade</button>
-        </div>
-
-        <div class="skillBox">
-            <h3>Snipe</h3>
-            <p>+1% chance for x2 BCR</p>
-            <p>Cost: <span id="costSnipe">20</span> BCR</p>
-            <button onclick="upgradeSkill('snipe')">Upgrade</button>
-        </div>
-
-        <div class="skillBox">
-            <h3>Energy</h3>
-            <p>+1% Max Energy</p>
-            <p>Cost: <span id="costEnergy">20</span> BCR</p>
-            <button onclick="upgradeSkill('energy')">Upgrade</button>
-        </div>
-    </div>
-
     <!-- TOWN -->
     <div id="town" class="screen hidden">
-        <h2>BCR Town</h2>
-
+        <h2>🏘️ BCR Town</h2>
         <p>BCR: <span id="townBcr">0</span></p>
         <p>Total Owned: <span id="townShops">0</span></p>
 
         <div class="shopBox">
             <h3>House</h3>
             <p>500 BCR - 1/sec</p>
+            <p>Owned: <span id="houseCount">0</span></p>
             <button onclick="buyShop('house')">Buy</button>
         </div>
 
         <div class="shopBox">
             <h3>Market</h3>
             <p>1500 BCR - 2/sec</p>
+            <p>Owned: <span id="marketCount">0</span></p>
             <button onclick="buyShop('market')">Buy</button>
         </div>
 
         <div class="shopBox">
             <h3>Garage</h3>
             <p>5000 BCR - 4/sec</p>
+            <p>Owned: <span id="garageCount">0</span></p>
             <button onclick="buyShop('garage')">Buy</button>
         </div>
 
         <div class="shopBox">
             <h3>Hotel</h3>
             <p>10000 BCR - 5/sec</p>
+            <p>Owned: <span id="hotelCount">0</span></p>
             <button onclick="buyShop('hotel')">Buy</button>
+        </div>
+
+        <div class="shopBox">
+            <h3>Pharmacy</h3>
+            <p>10000 BCR - gives x2 chance on passive income</p>
+            <p>Owned: <span id="pharmacyCount">0</span></p>
+            <button onclick="buyShop('pharmacy')">Buy</button>
         </div>
     </div>
 
     <!-- PROFILE -->
     <div id="profile" class="screen hidden">
-        <h2>Profile</h2>
-        <p>Total Passive Income: <span id="profilePassive">0</span>/sec</p>
-        <p>Total Shops Owned: <span id="profileTotal">0</span></p>
+        <h2>👤 Profile</h2>
+        <p>BCR: <span id="profileBcr">0</span></p>
+        <p>CD1: <span id="profileCd1">0</span></p>
+        <p>MVS: <span id="profileMvs">0</span></p>
+        <p>USDT: <span id="profileUsdt">0</span></p>
+
+        <h3>Owned Items:</h3>
+        <ul>
+            <li>House: <span id="profileHouse">0</span></li>
+            <li>Market: <span id="profileMarket">0</span></li>
+            <li>Garage: <span id="profileGarage">0</span></li>
+            <li>Hotel: <span id="profileHotel">0</span></li>
+            <li>Pharmacy: <span id="profilePharmacy">0</span></li>
+        </ul>
+    </div>
+
+    <!-- BCR CONVERTS -->
+    <div id="convert" class="screen hidden">
+        <h2>🔄 BCR Converts</h2>
+        <p>BCR: <span id="convertBcr">0</span></p>
+        <p>CD1: <span id="convertCd1">0</span></p>
+        <p>MVS: <span id="convertMvs">0</span></p>
+
+        <button onclick="convertBcr()">100,000,000 BCR → 1 CD1</button><br><br>
+        <button onclick="convertCd1()">10 CD1 → 1 MVS</button>
+    </div>
+
+    <!-- BURN -->
+    <div id="burn" class="screen hidden">
+        <h2>🔥 Burn</h2>
+        <p>CD1: <span id="burnCd1">0</span></p>
+        <p>MVS: <span id="burnMvs">0</span></p>
+        <p>USDT: <span id="burnUsdt">0</span></p>
+
+        <button onclick="burnCd1()">Burn 1 CD1 → 1 USDT</button><br><br>
+        <button onclick="burnMvs()">Burn 1 MVS → 10 USDT</button>
     </div>
 
     <script src="script.js"></script>
