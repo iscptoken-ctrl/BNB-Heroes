@@ -4,11 +4,15 @@ let energy = 10000;
 let bcrPerClick = 1;
 let energyPerClick = 100;
 
+// Levels
 let hodlLvl = 0;
 let snipeLvl = 0;
 let energyLvl = 0;
 
-let skillCost = 20;
+// Cost per skill
+let hodlCost = 20;
+let snipeCost = 20;
+let energyCost = 20;
 
 // Passive income
 let houses = 0;
@@ -18,25 +22,29 @@ let markets = 0;
 function updateUI() {
     document.getElementById("bcr").innerText = bcr;
     document.getElementById("energy").innerText = Math.floor(energy);
+
     document.getElementById("hodlLvl").innerText = hodlLvl;
     document.getElementById("snipeLvl").innerText = snipeLvl;
     document.getElementById("energyLvl").innerText = energyLvl;
-    document.getElementById("skillCost").innerText = skillCost;
+
+    document.getElementById("hodlCost").innerText = hodlCost;
+    document.getElementById("snipeCost").innerText = snipeCost;
+    document.getElementById("energyCost").innerText = energyCost;
+
     document.getElementById("houseCount").innerText = houses;
     document.getElementById("marketCount").innerText = markets;
 }
 
+// CLICK
 document.getElementById("clickBtn").addEventListener("click", () => {
     if (energy < energyPerClick) return;
 
     energy -= energyPerClick;
 
-    // Base gain
     let gain = bcrPerClick;
 
-    // Snipe chance for x2
-    let chance = Math.random() * 100;
-    if (chance < snipeLvl) {
+    // Snipe chance x2
+    if (Math.random() * 100 < snipeLvl) {
         gain *= 2;
     }
 
@@ -44,29 +52,30 @@ document.getElementById("clickBtn").addEventListener("click", () => {
     updateUI();
 });
 
-// Skill upgrades
+// SKILLS
 function upgradeSkill(type) {
-    if (bcr < skillCost) return;
-
-    bcr -= skillCost;
-    skillCost *= 2;
-
-    if (type === "hodl") {
+    if (type === "hodl" && bcr >= hodlCost) {
+        bcr -= hodlCost;
         hodlLvl++;
+        hodlCost *= 2;
         bcrPerClick *= 1.01;
     }
-    if (type === "snipe") {
+    else if (type === "snipe" && bcr >= snipeCost) {
+        bcr -= snipeCost;
         snipeLvl++;
+        snipeCost *= 2;
     }
-    if (type === "energy") {
+    else if (type === "energy" && bcr >= energyCost) {
+        bcr -= energyCost;
         energyLvl++;
-        energy = energy * 1.01;
+        energyCost *= 2;
+        energy *= 1.01;
     }
 
     updateUI();
 }
 
-// Town purchases
+// TOWN
 function buyBuilding(type) {
     if (type === "house" && bcr >= 500) {
         bcr -= 500;
@@ -80,10 +89,16 @@ function buyBuilding(type) {
     updateUI();
 }
 
-// Passive income loop
+// Passive BCR
 setInterval(() => {
     bcr += houses * 1;
     bcr += markets * 2;
+    updateUI();
+}, 1000);
+
+// Energy regen +5
+setInterval(() => {
+    energy += 5;
     updateUI();
 }, 1000);
 
