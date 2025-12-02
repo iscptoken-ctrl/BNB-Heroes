@@ -24,7 +24,7 @@ function showScreen(name) {
 function tap() {
     if (energy < 100) return;
     energy -= 100;
-    bcr += 1;
+    bcr += 100;
     updateUI();
 }
 
