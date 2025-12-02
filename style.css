@@ -1,65 +1,52 @@
 body {
-    background: #0e0e15;
+    background: #1a1a1a;
     color: white;
-    font-family: Arial, sans-serif;
     text-align: center;
+    font-family: Arial;
 }
 
-.container {
-    width: 90%;
-    max-width: 500px;
-    margin: auto;
-    margin-top: 20px;
+#menu {
+    background: #222;
+    padding: 10px;
+}
+
+#menu button {
+    margin: 5px;
+    padding: 10px 20px;
+    background: #ffa500;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.screen {
+    display: none;
+    padding: 20px;
+}
+
+.screen:not(.hidden) {
+    display: block;
 }
 
 #hero {
-    width: 180px;
-    user-select: none;
+    width: 260px;
+    margin: 20px auto;
+    border-radius: 20px;
 }
 
-.hero-area {
-    margin: 20px 0;
-}
-
-#tapButton {
-    padding: 12px 25px;
-    background: #ffd400;
-    color: black;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    font-size: 20px;
-    font-weight: bold;
-}
-
-.menu button {
-    padding: 10px 20px;
-    margin: 10px;
-    background: #246bff;
-    border: none;
-    border-radius: 10px;
-    color: white;
-    cursor: pointer;
-}
-
-.tab {
-    display: none;
-    background: rgba(255,255,255,0.05);
+.skillBox, .shopBox {
+    background: #333;
     padding: 15px;
+    margin: 10px auto;
+    width: 80%;
     border-radius: 10px;
-    margin-top: 20px;
 }
 
-.skill, .shop {
-    display: flex;
-    justify-content: space-between;
-    margin: 10px 0;
-}
-
-.skill button, .shop button {
-    padding: 7px 10px;
-    background: #32d47d;
+button {
+    padding: 10px 15px;
+    margin-top: 10px;
+    background: #00c853;
     border: none;
-    border-radius: 8px;
+    border-radius: 5px;
     cursor: pointer;
 }
