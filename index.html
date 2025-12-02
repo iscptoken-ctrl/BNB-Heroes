@@ -1,65 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BNB Heroes</title>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="game-container">
-        <h1>BNB Heroes</h1>
+<div class="container">
 
-        <div class="hero-area">
-            <img id="hero" 
-                 src="data:image/png;base64,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" />
-            
-            <p>Energy: <span id="energy">10000</span></p>
+    <h1>BNB Heroes</h1>
+
+    <div class="stats">
+        <p><strong>BCR:</strong> <span id="bcr">0</span></p>
+        <p><strong>Energy:</strong> <span id="energy">10000</span>/10000</p>
+    </div>
+
+    <div class="hero-area">
+        <img id="hero" src="https://i.imgur.com/sJZ8qDP.png">
+        <button id="tapButton">TAP</button>
+    </div>
+
+    <div class="menu">
+        <button onclick="openTab('skills')">Skills</button>
+        <button onclick="openTab('town')">BCR Town</button>
+    </div>
+
+    <!-- SKILLS -->
+    <div id="skills" class="tab">
+        <h2>Skills</h2>
+
+        <div class="skill">
+            <span>HODL (+1% BCR per click)</span>
+            <button onclick="upgradeSkill('hodl')">Upgrade (<span id="hodlCost">20</span> BCR)</button>
         </div>
 
-        <button id="clickBtn">Attack + Earn BCR</button>
-
-        <h2>BCR: <span id="bcr">0</span></h2>
-
-        <div class="menu">
-            <button onclick="openTab('skills')">Skills</button>
-            <button onclick="openTab('town')">BCR Town</button>
+        <div class="skill">
+            <span>Snipe (+1% x2 chance)</span>
+            <button onclick="upgradeSkill('snipe')">Upgrade (<span id="snipeCost">20</span> BCR)</button>
         </div>
 
-        <!-- Skills -->
-        <div id="skills" class="tab">
-            <h3>Skills</h3>
+        <div class="skill">
+            <span>Energy (+1% max energy)</span>
+            <button onclick="upgradeSkill('energy')">Upgrade (<span id="energyCost">20</span> BCR)</button>
+        </div>
+    </div>
 
-            <button onclick="upgradeSkill('hodl')">
-                HODL (Lvl <span id="hodlLvl">0</span>) — %1 daha fazla BCR  
-                <br>Cost: <span id="hodlCost">20</span>
-            </button>
+    <!-- TOWN -->
+    <div id="town" class="tab">
+        <h2>BCR Town</h2>
 
-            <button onclick="upgradeSkill('snipe')">
-                Snipe (Lvl <span id="snipeLvl">0</span>) — %1 x2 şans  
-                <br>Cost: <span id="snipeCost">20</span>
-            </button>
-
-            <button onclick="upgradeSkill('energy')">
-                Energy (Lvl <span id="energyLvl">0</span>) — enerji +%1  
-                <br>Cost: <span id="energyCost">20</span>
-            </button>
-
+        <div class="shop">
+            <span>House (500 BCR) → +1/sec</span>
+            <button onclick="buyItem('house')">Buy</button>
         </div>
 
-        <!-- Town -->
-        <div id="town" class="tab">
-            <h3>BCR Town</h3>
-            <button onclick="buyBuilding('house')">House (500 BCR) — +1/sec</button>
-            <button onclick="buyBuilding('market')">Market (1500 BCR) — +2/sec</button>
+        <div class="shop">
+            <span>Market (1500 BCR) → +2/sec</span>
+            <button onclick="buyItem('market')">Buy</button>
+        </div>
 
-            <p>Houses: <span id="houseCount">0</span></p>
-            <p>Markets: <span id="marketCount">0</span></p>
+        <div class="shop">
+            <span>Garage (5000 BCR) → +4/sec</span>
+            <button onclick="buyItem('garage')">Buy</button>
+        </div>
+
+        <div class="shop">
+            <span>Hotel (10000 BCR) → +5/sec</span>
+            <button onclick="buyItem('hotel')">Buy</button>
         </div>
 
     </div>
 
-    <script src="script.js"></script>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
