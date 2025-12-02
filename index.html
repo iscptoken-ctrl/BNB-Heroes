@@ -1,63 +1,52 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BNB HEROES</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BNB Heroes</title>
+    <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
-    <!-- Nickname Ekranı -->
-    <div id="nicknameScreen" class="screen">
-      <h1>BNB HEROES</h1>
-      <input type="text" id="nicknameInput" placeholder="Nickname gir (3-15 harf)" maxlength="15">
-      <button onclick="saveNickname()">OYUNA BAŞLA</button>
-      <p style="font-size:0.9rem;margin-top:20px;">İlk girişte nickname seç, sonra kalıcı olur!</p>
-    </div>
 
-    <!-- Ana Oyun Ekranı -->
-    <div id="gameScreen" class="screen hidden">
-      <div class="header">
-        <h1><span id="nick">Hero</span> ⚔️ BNB HEROES</h1>
-        <div class="stats">
-          <div>Level <span id="level">1</span> | Exp <span id="exp">0</span>/<span id="expNext">100</span></div>
-          <div>Gold <span id="gold">0</span> 💰</div>
+    <div class="game-container">
+        <h1>BNB Heroes</h1>
+
+        <div class="hero-area">
+            <img id="hero" src="https://i.imgur.com/JzCYZ6S.png" alt="Hero">
+            <p>Energy: <span id="energy">10000</span></p>
         </div>
-      </div>
 
-      <div class="game-area">
-        <canvas id="canvas" width="600" height="700"></canvas>
+        <button id="clickBtn">Attack + Earn BCR</button>
 
-        <div class="ui-overlay">
-          <div class="hp-bar"><div id="hpFill">100%</div><span id="hpText">100/100</span></div>
-          <button onclick="togglePause()" id="pauseBtn">PAUSE</button>
-          <button onclick="openMenu('mainStats')">Main Stats</button>
-          <button onclick="openMenu('skills')">Skills</button>
+        <h2>BCR: <span id="bcr">0</span></h2>
+
+        <div class="menu">
+            <button onclick="openTab('skills')">Skills</button>
+            <button onclick="openTab('town')">BCR Town</button>
         </div>
-      </div>
+
+        <!-- Skills -->
+        <div id="skills" class="tab">
+            <h3>Skills</h3>
+            <p>Upgrade cost: <span id="skillCost">20</span> BCR</p>
+
+            <button onclick="upgradeSkill('hodl')">HODL Level <span id="hodlLvl">0</span></button>
+            <button onclick="upgradeSkill('snipe')">Snipe Level <span id="snipeLvl">0</span></button>
+            <button onclick="upgradeSkill('energy')">Energy Level <span id="energyLvl">0</span></button>
+        </div>
+
+        <!-- Town -->
+        <div id="town" class="tab">
+            <h3>BCR Town</h3>
+            <button onclick="buyBuilding('house')">House (500 BCR) — +1/sec</button>
+            <button onclick="buyBuilding('market')">Market (1500 BCR) — +2/sec</button>
+
+            <p>Houses: <span id="houseCount">0</span></p>
+            <p>Markets: <span id="marketCount">0</span></p>
+        </div>
+
     </div>
 
-    <!-- Menüler -->
-    <div id="mainStats" class="menu hidden">
-      <h2>Main Stats (Ölünce sıfırlanmaz)</h2>
-      <div class="stat">Health <span id="mHealth">100</span> <button onclick="upgrade('health')">+1 (₿<span id="cHealth">1000</span>)</button></div>
-      <div class="stat">Attack <span id="mAttack">1</span> <button onclick="upgrade('attack')">+1 (₿<span id="cAttack">1000</span>)</button></div>
-      <div class="stat">Defence <span id="mDefence">1</span> <button onclick="upgrade('defence')">+1 (₿<span id="cDefence">1000</span>)</button></div>
-      <div class="stat">Regen <span id="mRegen">1</span> <button onclick="upgrade('regen')">+1 (₿<span id="cRegen">10000</span>)</button></div>
-      <button class="back" onclick="closeMenu()">← Geri</button>
-    </div>
-
-    <div id="skills" class="menu hidden">
-      <h2>In-Game Skills (Ölünce sıfırlanır)</h2>
-      <div class="stat">Radius <span id="sRadius">80</span> <button onclick="upgradeSkill('radius')">+10 (₿<span id="cRadius">100</span>)</button></div>
-      <div class="stat">Damage <span id="sDamage">5</span> <button onclick="upgradeSkill('damage')">+1 (₿<span id="cDamage">100</span>)</button></div>
-      <div class="stat">HP Bonus <span id="sHp">100</span> <button onclick="upgradeSkill('hp')">+5 (₿<span id="cHp">100</span>)</button></div>
-      <div class="stat">Regen <span id="sRegen">5</span>/5sn <button onclick="upgradeSkill('regen')">+1 (₿<span id="cRegenSkill">1000</span>)</button></div>
-      <button class="back" onclick="closeMenu()">← Geri</button>
-    </div>
-  </div>
-
-  <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
