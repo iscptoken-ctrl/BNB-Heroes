@@ -1,7 +1,7 @@
 let bcr = 0;
 let energy = 10000;
 
-let bcrPerClick = 1;
+let bcrPerClick = 10;
 let energyPerClick = 10;
 
 // Levels
@@ -96,9 +96,9 @@ setInterval(() => {
     updateUI();
 }, 1000);
 
-// Energy regen +5
+// Energy regen +10
 setInterval(() => {
-    energy += 5;
+    energy += 10;
     updateUI();
 }, 1000);
 
